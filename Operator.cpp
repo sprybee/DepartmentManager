@@ -34,11 +34,12 @@ void insertWorker(WorkerLink *workerLink) {
     }
     // 把当前链节点切换到最后一个
     while (workerLink->getNextWorker() != nullptr) {
-        if (workerLink->getWorker() != nullptr && tmpWorker->getWorkerId() == workerLink->getNextWorker()->getWorker()->getWorkerId()) {
-            if (tmpWorker->getIsDelete() == 0) {
+        if (workerLink->getNextWorker()->getWorker() != nullptr &&
+            tmpWorker->getWorkerId() == workerLink->getNextWorker()->getWorker()->getWorkerId()) {
+            if (workerLink->getNextWorker()->getWorker()->getIsDelete() == 0) {
                 cout << "插入失败:[用户ID有冲突]" << endl;
             } else {
-                tmpWorker->setIsDelete(0);
+                workerLink->getNextWorker()->getWorker()->setIsDelete(0);
             }
             return;
         }
@@ -63,6 +64,7 @@ void findWorkerInfo(WorkerLink *root) {
 }
 
 void deleteAllWorker(WorkerLink *root) {
+    WorkerLink *head = root;
     while (root->getNextWorker() != nullptr) {
         WorkerLink *nextWorkerLink = root->getNextWorker();
         Worker *curWorker = root->getWorker();
@@ -72,7 +74,8 @@ void deleteAllWorker(WorkerLink *root) {
         delete root;
         root = nextWorkerLink;
     }
-    root = new WorkerLink;
+    delete root;
+    *head = *new WorkerLink;
 }
 
 void sortByWorker(WorkerLink *root) {
@@ -100,7 +103,7 @@ void deleteWorker(WorkerLink *root) {
     cin >> userId;
     while (root != nullptr) {
         Worker *worker = root->getWorker();
-        if (worker != nullptr && !worker->getIsDelete() && worker->getWorkerId() ==userId) {
+        if (worker != nullptr && !worker->getIsDelete() && worker->getWorkerId() == userId) {
             worker->setIsDelete(1);
             return;
         }
